@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { SideBar } from '../SideBar';
 
 describe('SideBar', () => {
-  it('renders correctly', () => {
+  it('Renders correctly', () => {
     const { getByText } = render(<SideBar />, { wrapper: BrowserRouter });
 
     expect(getByText('Web of Death')).toBeInTheDocument();

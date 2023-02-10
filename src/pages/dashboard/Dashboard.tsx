@@ -4,16 +4,14 @@ import { SideBar } from '../../components/dashboard/SideBar'
 
 export const Dashboard = () => {
   return (
-    <Grid container>
+    <Grid container spacing={0}>
       <Grid item xs={2}>
         <aside>
           <SideBar />
         </aside>
       </Grid>
-      <Grid>
-        <main>
-          <Outlet />
-        </main>
+      <Grid item xs={10}>
+        <Outlet />
       </Grid>
     </Grid>
   )
