@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 
-import { Customer } from '../Customer';
+import { Customers } from '../Customer';
 
 describe('Customers', () => {
   it('should render customer name', () => {
-    render(<Customer />);
+    render(<Customers />);
     expect(screen.getByText('John')).toBeInTheDocument();
   })
 })

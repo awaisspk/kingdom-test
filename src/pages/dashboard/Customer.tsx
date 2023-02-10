@@ -1,5 +1,4 @@
-
-export const Customer = () => {
+export const Customers = () => {
   return (
     <div>
       John
