@@ -1,11 +1,16 @@
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { accounts } from '../../../mocks/data';
-import { getSearchQuery } from '../../../utils';
-import { CustomersList, CustomerDetails, SearchEmail } from '../Customers';
+import { CustomersList, CustomerDetails } from '../Customers';
 
 describe('CustomersList', () => {
+  const customers = {
+    max_results: 2,
+    accounts: [
+      { id: 1, email: 'random1@email.com' },
+      { id: 2, email: 'random2@email.com' }
+    ]
+  };
 
   it('Render loading state', () => {
     const { getByTestId } = render(<CustomersList customers={{ max_results: 0, accounts: [] }} loading={true} />, { wrapper: BrowserRouter });
@@ -13,13 +18,6 @@ describe('CustomersList', () => {
   });
 
   it('Render customers list when there are customer accounts', () => {
-    const customers = {
-      max_results: 2,
-      accounts: [
-        { id: 1, email: 'random1@email.com' },
-        { id: 2, email: 'random2@email.com' }
-      ]
-    };
 
     const { getByText } = render(<CustomersList customers={customers} loading={false} />, { wrapper: BrowserRouter });
     expect(getByText('random1@email.com')).toBeInTheDocument();
@@ -32,13 +30,6 @@ describe('CustomersList', () => {
   });
 
   it('Handle selected item correctly', () => {
-    const customers = {
-      max_results: 2,
-      accounts: [
-        { id: 1, email: 'random1@email.com' },
-        { id: 2, email: 'random2@email.com' }
-      ]
-    };
     const { getByText } = render(<CustomersList customers={customers} loading={false} />, { wrapper: BrowserRouter });
     expect(getByText('random2@email.com')).toBeInTheDocument()
   });
