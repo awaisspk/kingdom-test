@@ -18,7 +18,6 @@ type ICustomers = {
 
 export const CustomersList = ({ customers, loading }: ICustomers) => {
   const [selected, setSelected] = useState('');
-  const [seachParams, setSearchParams] = useSearchParams()
 
   const handleSelectedItem = (
     selected: string,
@@ -50,12 +49,7 @@ export const CustomersList = ({ customers, loading }: ICustomers) => {
           padding: '20px 5px'
         }}
       >
-        <TextField
-          label="Search"
-          size="small"
-          fullWidth
-          onChange={(e) => setSearchParams({ q: e.target.value })}
-        />
+        <SearchEmail />
 
         {loading ? (
           <Stack spacing={2} data-testid='loading-skeleton-1'>
@@ -81,15 +75,8 @@ export const CustomersList = ({ customers, loading }: ICustomers) => {
                   </ListItem>
                 ))}
               </List>
-
-              <Pagination
-                count={Math.ceil(customers.max_results / 40)}
-                page={Number(seachParams.get('page')) || 1}
-                onChange={(_e, page) => {
-                  setSearchParams({ page: page.toString() })
-                }}
-                sx={{ height: 40, margin: '0 auto' }}
-
+              <AccountsPagination
+                maxResults={customers.max_results}
               />
             </>
             : <p>No Accounts to display</p>
@@ -101,9 +88,9 @@ export const CustomersList = ({ customers, loading }: ICustomers) => {
   )
 }
 
+
 export const CustomerDetails = ({ email }: { email: string }) => {
   const { isLoading, data } = useSWR(`https://base.api/user/${email}`, fetcher)
-
 
   return (
     <Box
@@ -151,5 +138,48 @@ export const CustomerDetails = ({ email }: { email: string }) => {
         </>
       }
     </Box>
+  )
+}
+
+const AccountsPagination = ({ maxResults }: { maxResults: number }) => {
+  const [seachParams, setSearchParams] = useSearchParams()
+
+  const handlePagination = (value: number) => {
+    const newSearchParams = new URLSearchParams(seachParams);
+    newSearchParams.set('page', value.toString());
+    setSearchParams(newSearchParams);
+  }
+
+  return (
+    <Pagination
+      count={Math.ceil(maxResults / 40)}
+      page={Number(seachParams.get('page')) || 1}
+      onChange={(_e, value) => handlePagination(value)}
+      sx={{ height: 40, margin: '0 auto' }}
+    />
+  )
+}
+
+
+export const SearchEmail = () => {
+  const [seachParams, setSearchParams] = useSearchParams()
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.value) {
+      const newSearchParams = new URLSearchParams(seachParams);
+      newSearchParams.delete('q')
+      setSearchParams(newSearchParams);
+    } else {
+      setSearchParams({ q: e.target.value });
+    }
+  }
+
+  return (
+    <TextField
+      label="Search"
+      size="small"
+      fullWidth
+      onChange={handleSearch}
+    />
   )
 }

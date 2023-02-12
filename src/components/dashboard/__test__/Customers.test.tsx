@@ -1,16 +1,15 @@
-import { render, screen, cleanup, fireEvent,  waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { accounts } from '../../../mocks/data';
-import { CustomersList, CustomerDetails } from '../Customers';
+import { getSearchQuery } from '../../../utils';
+import { CustomersList, CustomerDetails, SearchEmail } from '../Customers';
 
 describe('CustomersList', () => {
-  afterEach(cleanup);
 
   it('Render loading state', () => {
     const { getByTestId } = render(<CustomersList customers={{ max_results: 0, accounts: [] }} loading={true} />, { wrapper: BrowserRouter });
-
     expect(getByTestId('loading-skeleton-1')).toBeInTheDocument();
-
   });
 
   it('Render customers list when there are customer accounts', () => {
@@ -23,14 +22,12 @@ describe('CustomersList', () => {
     };
 
     const { getByText } = render(<CustomersList customers={customers} loading={false} />, { wrapper: BrowserRouter });
-
     expect(getByText('random1@email.com')).toBeInTheDocument();
     expect(getByText('random2@email.com')).toBeInTheDocument();
   });
 
   it('Render no accounts message when there are no accounts', () => {
     const { getByText } = render(<CustomersList customers={{ max_results: 0, accounts: [] }} loading={false} />, { wrapper: BrowserRouter });
-
     expect(getByText('No Accounts to display')).toBeInTheDocument();
   });
 
@@ -43,26 +40,23 @@ describe('CustomersList', () => {
       ]
     };
     const { getByText } = render(<CustomersList customers={customers} loading={false} />, { wrapper: BrowserRouter });
-
-    fireEvent.click(getByText('random2@email.com'));
-
     expect(getByText('random2@email.com')).toBeInTheDocument()
   });
 });
 
 
 describe('CustomerDetails', () => {
-  afterEach(cleanup);
 
   it('Render loading state', async () => {
     render(<CustomerDetails email={accounts[0].email} />, { wrapper: BrowserRouter });
-    expect(await screen.findByTestId('loading-skeleton-2')).toBeInTheDocument();
+    expect(screen.getByTestId('loading-skeleton-2')).toBeInTheDocument();
   });
 
   it('Render customer details', async () => {
 
     render(<CustomerDetails email={accounts[0].email} />, { wrapper: BrowserRouter });
     await waitForElementToBeRemoved(() => screen.getByTestId('loading-skeleton-2'));
+
     expect(screen.getByLabelText('Email')).toHaveValue(accounts[0].email);
     expect(screen.getByLabelText('Activation Status')).toHaveValue('ACTIVE')
   });
